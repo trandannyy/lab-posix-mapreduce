@@ -235,7 +235,7 @@ You should see the file `colors.png` was created in your lab folder.
 
 > **Note:**
 > `png` is [officially pronounced like "ping"](https://en.wikipedia.org/wiki/PNG),
-> and so `colors.png` is pronounced as "top ten dot ping".
+> and so `colors.png` is pronounced as "colors dot ping".
 
 ### Part 2.d: Viewing the Image
 
