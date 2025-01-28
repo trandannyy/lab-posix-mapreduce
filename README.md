@@ -234,8 +234,8 @@ Leave the gnuplot shell by typing `^D` and run `ls`.
 You should see the file `colors.png` was created in your lab folder.
 
 > **Note:**
-> `png` is [officially pronounced like "ping"](https://en.wikipedia.org/wiki/PNG),
-> and so `colors.png` is pronounced as "colors dot ping".
+> `png` is [officially pronounced like "ping"](https://en.wikipedia.org/wiki/PNG).
+> So `colors.png` is pronounced as "colors dot ping" and not "colors dot p n g".
 
 ### Part 2.d: Viewing the Image
 
@@ -339,6 +339,15 @@ $ unzip -p /data/Twitter\ dataset/geoTwitter20-01-01.zip | jq '.place.country_co
 ```
 For long commands like this, it is common to break them up onto multiple lines.
 In the shell (and most programming environments), any line that ends with a backslash `\` is treated as continuing on to the next line.
+
+> **ASIDE:**
+> Why does `\` at the end of the line behave this way?
+> Recall that `\` is used to *escape* the following character so that it does not have it's normal meaning.
+> For example, the python command `a = "\""` escapes the innermost `"` character so that we are able to assign `"` to the variable `a` rather than close the string.
+> When used at the end of a line, `\` will escape the newline character `\n` that immediately follows it.
+> This changes the behavior from being a newline to a standard space character,
+> which causes the command to continue onto the next line.
+
 Thus the following more readable shell command is 100% equivalent to the shell command above.
 ```
 $ unzip -p /data/Twitter\ dataset/geoTwitter20-01-01.zip \
@@ -367,15 +376,22 @@ $ ps
 25761 pts/3    00:00:00 gnuplot
 25825 pts/3    00:00:00 ps
 ```
-Recall that `ps` lists all of the processes that are currently running.
+Recall that `ps` lists all of the processes that are currently running in the current shell session.
 Notice that each of the commands in your shell 1-liner is actually running concurrently.
 The time that is listed for each of these processes is the total amount of CPU time that process has used.
 In the output above, `unzip` has used 22 seconds, and `jq` has used 54 seconds.
 Fortunately, because the lambda server has so many CPUs available, each of these processes will be running on their own CPU and running in parallel.
 The amount of time for the entire command to complete is therefore only the length of time for the slowest command,
 and not the total length of time for all commands.
-In Python, it is essentially impossible to have the unzip and json decoding happen in parallel due to the [Global Interpreter Lock (GIL)](https://wiki.python.org/moin/GlobalInterpreterLock) (although there is [some recent work to fix this peoblem](https://www.infoworld.com/article/3704248/python-moves-to-remove-the-gil-and-boost-concurrency.html)).
-In the shell, it is trivial to have these expensive tasks run in parallel.
+
+> **Aside:**
+> If we were to rewrite the above pipeline in pure Python, it would be impossible to have the unzipping and json decoding happen in parallel due to the [Global Interpreter Lock (GIL)](https://wiki.python.org/moin/GlobalInterpreterLock).
+> This GIL is one of the performance warts of python that the [Benevolent Dictator for Life (BDFL)](https://en.wikipedia.org/wiki/Benevolent_dictator_for_life) Guido van Rossum implemented in the early days of python to make programming easier.
+> Recently, there has been work on removing the GIL from python in order to make parallel programming possible.
+> [PEP703](https://peps.python.org/pep-0703/) was created in 2023 to address this concern, and the latest versions of python can be run without the GIL.
+> But these changes are still considered experimental and not production ready.
+>
+> The shell, in contrast, has made it trivial to have these expensive tasks run in parallel since the 1970s.
 
 When your command completes, upload the `top10.png` file to github.
 You should see it appear below.
@@ -386,7 +402,7 @@ You should see it appear below.
 
 Recall from the [MapReduce homework](https://github.com/mikeizbicki/twitter_coronavirus) that MapReduce is a parallel procedure for large scale data analysis.
 In MapReduce, the "mappers" analyze small parts of the dataset in parallel, and then the "reducers" combine those results into a final result.
-In the homework, you used (or will use) a combination of python and the shell to perform these tasks.
+In the homework, you will use a combination of python and the shell to perform these tasks.
 In this lab, we'll see how to perform MapReduce entirely in the shell.
 
 Our goal will be to generate a plot of how many tweets were sent from each country in the first 9 days of 2020.
